@@ -29,12 +29,27 @@ if (mesh.is_watertight) :
     cex,cey = 15,15
     r=0.5
     print("generating domain mesh..")
-    X = np.arange(0-cex+r,(lx-cex+r)+((lx-cex+r)/nx),(lx-cex+r)/nx)
-    Y = np.arange(0-cey+r,(ly-cey+r)+((ly-cey+r)/ny),(ly-cey+r)/ny)
+    X = np.arange(0-cex,(lx-cex)+((lx-cex)/nx),(lx-cex)/nx)
+    Y = np.arange(0-cey,(ly-cey)+((ly-cey)/ny),(ly-cey)/ny)
     Z = np.arange(0,lz+(lz/nz),lz/nz)
     Px,Py,Pz = np.meshgrid(X,Y,Z)
     P = np.stack((Px.ravel(),Py.ravel(),Pz.ravel()), axis=1)
     print("Domain mesh generation completed !")
+
+    #checking if the geometry and mesh coincide.
+    p = trimesh.PointCloud(P)
+    print("Centroid of Geometry: ",mesh.centroid)
+    print("Centroid of Mesh: ",p.centroid)
+
+    crrtn = mesh.centroid - p.centroid
+
+    print("regenerating domain mesh..")
+    X = np.arange(0-cex+crrtn[0],(lx-cex+crrtn[0])+((lx-cex+crrtn[0])/nx),(lx-cex+crrtn[0])/nx)
+    Y = np.arange(0-cey+crrtn[1],(ly-cey+crrtn[1])+((ly-cey+crrtn[1])/ny),(ly-cey+crrtn[1])/ny)
+    Z = np.arange(0,lz+(lz/nz),lz/nz)
+    Px,Py,Pz = np.meshgrid(X,Y,Z)
+    P = np.stack((Px.ravel(),Py.ravel(),Pz.ravel()), axis=1)
+    print("Domain mesh regeneration completed !")
 
     #checking if the geometry and mesh coincide.
     p = trimesh.PointCloud(P)
