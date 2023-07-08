@@ -3,6 +3,7 @@
 import numpy as np
 import trimesh
 import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
 
 # define Python user-defined exceptions
 class GeometryNotWatertightException(Exception):
@@ -24,13 +25,13 @@ if (mesh.is_watertight) :
 
     #generating the domain with required parameters
 
-    nx,ny,nz = 101,101,10
+    nx,ny,nz = 261,260,20
     lx,ly,lz = 30,30,6
     cex,cey = 15,15
     r=0.5
     print("generating domain mesh..")
-    X = np.arange(0-cex,(lx-cex)+((lx-cex)/nx),(lx-cex)/nx)
-    Y = np.arange(0-cey,(ly-cey)+((ly-cey)/ny),(ly-cey)/ny)
+    X = np.arange(0,(lx)+((lx)/nx),(lx)/nx)
+    Y = np.arange(0,(ly)+((ly)/ny),(ly)/ny)
     Z = np.arange(0,lz+(lz/nz),lz/nz)
     Px,Py,Pz = np.meshgrid(X,Y,Z)
     P = np.stack((Px.ravel(),Py.ravel(),Pz.ravel()), axis=1)
@@ -40,31 +41,42 @@ if (mesh.is_watertight) :
     p = trimesh.PointCloud(P)
     print("Centroid of Geometry: ",mesh.centroid)
     print("Centroid of Mesh: ",p.centroid)
+    
+    #moves the centroid of the geometry to the required center [cex,cey,lz/2]
+    crrtn = mesh.centroid - [cex,cey,lz/2]
+    mesh.apply_translation(-crrtn)
 
-    crrtn = mesh.centroid - p.centroid
-
-    print("regenerating domain mesh..")
-    X = np.arange(0-cex+crrtn[0],(lx-cex+crrtn[0])+((lx-cex+crrtn[0])/nx),(lx-cex+crrtn[0])/nx)
-    Y = np.arange(0-cey+crrtn[1],(ly-cey+crrtn[1])+((ly-cey+crrtn[1])/ny),(ly-cey+crrtn[1])/ny)
-    Z = np.arange(0,lz+(lz/nz),lz/nz)
-    Px,Py,Pz = np.meshgrid(X,Y,Z)
-    P = np.stack((Px.ravel(),Py.ravel(),Pz.ravel()), axis=1)
-    print("Domain mesh regeneration completed !")
-
-    #checking if the geometry and mesh coincide.
-    p = trimesh.PointCloud(P)
+    print("After coinciding the geometry and mesh centroids")
     print("Centroid of Geometry: ",mesh.centroid)
     print("Centroid of Mesh: ",p.centroid)
 
     print("generating the epsilon function")
     epsilon = mesh.contains(P)
-    print("epsilon function generated. Saving into epsilon.txt")
 
+    epsilonPoints = np.zeros(shape = (0,3))
+    n=0
+    for i in epsilon:
+        if i:
+            epsilonPoints = np.append(epsilonPoints,[P[n]],axis=0)
+        n+=1
+    epsilonPoints = np.array(epsilonPoints)
+    
+    print("plotting the points inside the mesh..")
+    # Display the points in/out the mesh
+    fig = plt.figure()
+    ax = fig.add_subplot(projection = '3d')
+    ax.scatter(epsilonPoints[:,0], epsilonPoints[:,1], epsilonPoints[:,2], lw = 0., c = 'k')
+    plt.title("Epsilon Function of the geometry")
+    plt.xlim([14.3,15.7])
+    plt.ylim([14.3,15.7])
+    plt.show()
+    
+    '''print("epsilon function generated. Saving into epsilon.txt")
     with open("epsilon.txt", 'w') as f:
         for x in epsilon:
             f.write(str(x)+'\n')
 
-    print("Epsilon file generated successfully.")
+    print("Epsilon file generated successfully.")'''
 
 else:
     raise GeometryNotWatertightException
