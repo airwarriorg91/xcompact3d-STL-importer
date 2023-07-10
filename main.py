@@ -11,7 +11,7 @@ import time
 class GeometryNotWatertightException(Exception):
     "Epsilon function generation failed. The geometry is not watertight. Please check!"
     pass
-    
+   
 #loading the stl file
 mesh = trimesh.load_mesh('models/statue.STL')
 print(trimesh.units.units_from_metadata(mesh))
@@ -67,7 +67,7 @@ if (mesh.is_watertight) :
     ax.set_xlabel('X')
     ax.set_ylabel('Y')
     ax.set_zlabel('Z')
-    ax.set_zlim([0,lx])
+    ax.set_zlim([0,lx])    
     plt.show()
     
     '''print("epsilon function generated. Saving into epsilon.txt")
