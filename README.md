@@ -30,6 +30,13 @@ I wanted to use complex geometry in xcompact3d code and one of the sister python
   _Note: By default the `cez` is set as the midpoint of the length in z-direction i.e. `lz/2`. If you wish to change it, you can modify the line 
   `cex,cey,cez = 15,15, lz/2` to accomodate for the cez._
 
+### Dimensions of geometry in the STL file?
+Epsilon Function is a matrix of points scoped from a 3D domain of points based on the geometry. In the program, the parameters are adimnesionalised just like xcompact3d.
+
+For example, if the geomtry is a 3D cylinder with diameter 1 Unit and height is 6 Units, you want a domain 30 x 30 x 6 times the diameter of the cylinder, then the parameters `[lx, ly, lz]` is equal to `[30,30,6]`.
+
+So, parameters `[lx, ly, lz]` should be multipled by the length you have adimensionalized the domain. 
+
 ### Running the python code
 + Open the cloned folder and copy your STL file to the models folder.
 + Modify the `main.py` to import the STL and other simulation parameters.
