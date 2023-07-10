@@ -7,14 +7,20 @@ The code is based on the trimesh python library for the import and manipulation 
 I wanted to use complex geometry in xcompact3d code and one of the sister python library [xcompact3d-toolbox](https://github.com/fschuch/xcompact3d_toolbox/) provides the option to input geometry from an STL file in the sandbox mode of xcompact3d. I planned to generate epsilon function for the geomtry and then modify the fortran code of xcompact3d to read the generated epsilon function. But due to compatibility issues in the dependencies of the library, I wasn't able to install the library. So, I built this code to accomplish the problem.
 
 ## Dependencies
-+ Python 3
++ Pandas
 + Numpy
 + Trimesh
 + Matplotlib
++ PyQt5
++ Pyglet
++ Scipy
++ Pillow
 
 ## How to install and use the library ?
 ### Steps to intall the library:
 + Clone this repositry using the command `git clone https://github.com/airwarriorg91/xcompact3d-stl_2_epsilon_generator`
++ Open the repositry folder
++ Install all the dependencies using `pip install -r requirements.txt`
 
 ### Xcompact3d Simulation Parameters:
 + `lx`, `ly` and `lz` (Length of domain in x, y and z directions)
@@ -37,6 +43,7 @@ The python code generates a .txt file which will be read by the fortran code of 
 The code was used to generate epslion function for the following STL geometries.
 
 * Cylinder (Diameter: 1, Height: 6, Domain: (30, 30, 6) and Mesh Size: (261, 260, 20))
+
   ![Cylinder STL Geometry visualized and converted into Epsilon function using the code](/images/cylinder.png)
 
 ***NOTE: The code is in development phase. If you want to contribute you can create a pull request and discuss it with me through mail. Reach me out [here](mailto:gauravxpgupta@gmail.com)***
