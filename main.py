@@ -4,15 +4,16 @@ import numpy as np
 import trimesh
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
+import time
+
 
 # define Python user-defined exceptions
 class GeometryNotWatertightException(Exception):
     "Epsilon function generation failed. The geometry is not watertight. Please check!"
     pass
-
-
+    
 #loading the stl file
-mesh = trimesh.load_mesh('models/cylinder.STL')
+mesh = trimesh.load_mesh('models/statue.STL')
 print(trimesh.units.units_from_metadata(mesh))
 
 #the stl geometry should be watertight otherwise
@@ -25,8 +26,8 @@ if (mesh.is_watertight) :
 
     #generating the domain with required parameters
 
-    nx,ny,nz = 261,260,20
-    lx,ly,lz = 30,30,6
+    nx,ny,nz = 301,300,50
+    lx,ly,lz = 30,30,15
     cex,cey,cez = 15,15, lz/2
     r=0.5
     print("generating domain mesh..")
@@ -52,15 +53,9 @@ if (mesh.is_watertight) :
 
     print("generating the epsilon function")
     epsilon = mesh.contains(P)
+    index = np.where(epsilon == True)
+    epsilonPoints = P[index]
 
-    epsilonPoints = np.zeros(shape = (0,3))
-    n=0
-    for i in epsilon:
-        if i:
-            epsilonPoints = np.append(epsilonPoints,[P[n]],axis=0)
-        n+=1
-    epsilonPoints = np.array(epsilonPoints)
-    
     print("plotting the points inside the mesh..")
     # Display the points in/out the mesh
     fig = plt.figure()

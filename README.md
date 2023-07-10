@@ -46,4 +46,8 @@ The code was used to generate epslion function for the following STL geometries.
 
   ![Cylinder STL Geometry visualized and converted into Epsilon function using the code](/images/cylinder.png)
 
+* Statue (Height: 10.15, Domain: (30,30, 15) and Mesh Size: (301,300,50))
+
+  ![Statue STL Geometry visualized and converted into Epsilon function using the code](/images/statue.png)
+
 ***NOTE: The code is in development phase. If you want to contribute you can create a pull request and discuss it with me through mail. Reach me out [here](mailto:gauravxpgupta@gmail.com)***
