@@ -39,7 +39,7 @@ I wanted to use complex geometry in xcompact3d code and one of the sister python
 The python code generates a .txt file which will be read by the fortran code of xcompact3d to create the geometry from the generated epsilon function.
 
 
-##Results
+## Results
 The code was used to generate epslion function for the following STL geometries.
 
 * Cylinder (Diameter: 1, Height: 6, Domain: (30, 30, 6) and Mesh Size: (261, 260, 20))
