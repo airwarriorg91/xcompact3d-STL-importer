@@ -13,7 +13,7 @@ class GeometryNotWatertightException(Exception):
     pass
    
 #loading the stl file
-mesh = trimesh.load_mesh('models/statue.STL')
+mesh = trimesh.load_mesh('models/cylinder.STL')
 print(trimesh.units.units_from_metadata(mesh))
 
 #the stl geometry should be watertight otherwise
@@ -68,14 +68,14 @@ if (mesh.is_watertight) :
     ax.set_ylabel('Y')
     ax.set_zlabel('Z')
     ax.set_zlim([0,lx])    
-    plt.show()
+    #plt.show() #uncomment to visualize the epsilon function
     
-    '''print("epsilon function generated. Saving into epsilon.txt")
+    print("epsilon function generated. Saving into epsilon.txt")
     with open("epsilon.txt", 'w') as f:
-        for x in epsilon:
-            f.write(str(x)+'\n')
+        for x in epsilonPoints:
+            f.write(str(x[0])+' '+str(x[1])+' '+str(x[2])+'\n')
 
-    print("Epsilon file generated successfully.")'''
+    print("Epsilon file generated successfully.")
 
 else:
     raise GeometryNotWatertightException
