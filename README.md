@@ -22,7 +22,7 @@ I wanted to use complex geometry in xcompact3d code and one of the sister python
 + `cex` and `cey` (X and Y coordinates of centre of the geometry)
 
   _Note: By default the `cez` is set as the midpoint of the length in z-direction i.e. `lz/2`. If you wish to change it, you can modify the line 
-  `crrtn = mesh.centroid - [cex,cey,lz/2]` to accomodate for the cez._
+  `cex,cey,cez = 15,15, lz/2` to accomodate for the cez._
 
 ### Running the python code
 + Open the cloned folder and copy your STL file to the models folder.
@@ -37,7 +37,6 @@ The python code generates a .txt file which will be read by the fortran code of 
 The code was used to generate epslion function for the following STL geometries.
 
 * Cylinder (Diameter: 1, Height: 6, Domain: (30, 30, 6) and Mesh Size: (261, 260, 20))
-  ![Cylinder STL Geometry visualized using the code](/images/cylinder_3d.png)
-  ![Epsilon function generated for the geomtery](/images/cylinder_epsilon.png)
+  ![Cylinder STL Geometry visualized and converted into Epsilon function using the code](/images/cylinder.png)
 
 ***NOTE: The code is in development phase. If you want to contribute you can create a pull request and discuss it with me through mail. Reach me out [here](mailto:gauravxpgupta@gmail.com)***

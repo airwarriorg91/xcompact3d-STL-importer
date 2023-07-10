@@ -27,7 +27,7 @@ if (mesh.is_watertight) :
 
     nx,ny,nz = 261,260,20
     lx,ly,lz = 30,30,6
-    cex,cey = 15,15
+    cex,cey,cez = 15,15, lz/2
     r=0.5
     print("generating domain mesh..")
     X = np.arange(0,(lx)+((lx)/nx),(lx)/nx)
@@ -43,7 +43,7 @@ if (mesh.is_watertight) :
     print("Centroid of Mesh: ",p.centroid)
     
     #moves the centroid of the geometry to the required center [cex,cey,lz/2]
-    crrtn = mesh.centroid - [cex,cey,lz/2]
+    crrtn = mesh.centroid - [cex,cey,cez]
     mesh.apply_translation(-crrtn)
 
     print("After coinciding the geometry and mesh centroids")
