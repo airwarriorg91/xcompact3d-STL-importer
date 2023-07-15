@@ -13,7 +13,8 @@ class GeometryNotWatertightException(Exception):
     pass
    
 #loading the stl file
-mesh = trimesh.load_mesh('models/cylinder.STL')
+file_name = "flat-plate"
+mesh = trimesh.load_mesh("models/"+file_name+".STL")
 print(trimesh.units.units_from_metadata(mesh))
 
 #the stl geometry should be watertight otherwise
@@ -26,10 +27,10 @@ if (mesh.is_watertight) :
 
     #generating the domain with required parameters
 
-    nx,ny,nz = 301,300,50
-    lx,ly,lz = 30,30,15
-    cex,cey,cez = 15,15, lz/2
-    r=0.5
+    nx,ny,nz = 641,640,20
+    lx,ly,lz = 11,3.05,3.05
+    cex,cey,cez = lx/2,ly/2, lz/2
+    #r=0.5
     print("generating domain mesh..")
     X = np.arange(0,(lx)+((lx)/nx),(lx)/nx)
     Y = np.arange(0,(ly)+((ly)/ny),(ly)/ny)
@@ -71,7 +72,7 @@ if (mesh.is_watertight) :
     #plt.show() #uncomment to visualize the epsilon function
     
     print("epsilon function generated. Saving into epsilon.txt")
-    with open("epsilon.txt", 'w') as f:
+    with open("epsilon_"+file_name+"_"+str(nx)+".txt", 'w') as f:
         for x in epsilonPoints:
             f.write(str(x[0])+' '+str(x[1])+' '+str(x[2])+'\n')
 
