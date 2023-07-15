@@ -59,4 +59,10 @@ The code was used to generate epslion function for the following STL geometries.
 
   ![Statue STL Geometry visualized and converted into Epsilon function using the code](/images/statue.png)
 
+* Flat Plate with a bevel (Height: 0.08, Length: 0.4, Domain: (11,3.05,3.05))
+  
+  Reference Paper: Chen, Jerry M., and Yuan-Cheng Fang. "Strouhal numbers of inclined flat plates." Journal of wind engineering and industrial aerodynamics 61.2-3 (1996): 99-112. 
+
+   ![Flat Plate STL Geometry visualized and converted into Epsilon function using the code](/images/flat-plate.png)
+
 ***NOTE: The code is in development phase. If you want to contribute you can create a pull request and discuss it with me through mail. Reach me out [here](mailto:gauravxpgupta@gmail.com)***
