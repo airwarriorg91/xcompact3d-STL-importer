@@ -28,15 +28,16 @@ if (mesh.is_watertight) :
     #generating the domain with required parameters
 
     nx,ny,nz = 641,640,20
-    lx,ly,lz = 11,3.05,3.05
+    lx,ly,lz = 275,76.25,76.25
     cex,cey,cez = lx/2,ly/2, lz/2
     #r=0.5
     print("generating domain mesh..")
-    X = np.arange(0,(lx)+((lx)/nx),(lx)/nx)
-    Y = np.arange(0,(ly)+((ly)/ny),(ly)/ny)
-    Z = np.arange(0,lz+(lz/nz),lz/nz)
+    X = np.arange(0,lx,(lx)/nx)
+    Y = np.arange(0,ly,(ly)/ny)
+    Z = np.arange(0,lz,lz/nz)
     Px,Py,Pz = np.meshgrid(X,Y,Z)
     P = np.stack((Px.ravel(),Py.ravel(),Pz.ravel()), axis=1)
+
     print("Domain mesh generation completed !")
 
     #checking if the geometry and mesh coincide.
@@ -56,7 +57,6 @@ if (mesh.is_watertight) :
     epsilon = mesh.contains(P)
     index = np.where(epsilon == True)
     epsilonPoints = P[index]
-
     print("plotting the points inside the mesh..")
     # Display the points in/out the mesh
     fig = plt.figure()
@@ -69,12 +69,16 @@ if (mesh.is_watertight) :
     ax.set_ylabel('Y')
     ax.set_zlabel('Z')
     ax.set_zlim([0,lx])    
-    #plt.show() #uncomment to visualize the epsilon function
+    plt.show() #uncomment to visualize the epsilon function
     
     print("epsilon function generated. Saving into epsilon.txt")
-    with open("epsilon_"+file_name+"_"+str(nx)+".txt", 'w') as f:
-        for x in epsilonPoints:
-            f.write(str(x[0])+' '+str(x[1])+' '+str(x[2])+'\n')
+
+    epsilon=np.reshape(epsilon,(len(X),len(Y),len(Z)))
+    index = np.where(epsilon == True)
+    with open("epsilon_"+file_name+"_"+str(nx)+".dat", 'w') as f:
+        f.write(str(len(index[0]))+'\n')
+        for x in range(len(index[0])):
+            f.write(str(index[0][x])+' '+str(index[1][x])+' '+str(index[2][x])+'\n')
 
     print("Epsilon file generated successfully.")
 
