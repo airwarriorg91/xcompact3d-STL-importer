@@ -68,7 +68,7 @@ if (mesh.is_watertight) :
     ax.set_xlabel('X')
     ax.set_ylabel('Y')
     ax.set_zlabel('Z')
-    ax.set_zlim([0,lx])    
+    ax.set_zlim([0,lz])    
     plt.show() #uncomment to visualize the epsilon function
     
     print("epsilon function generated. Saving into epsilon.dat")
