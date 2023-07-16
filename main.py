@@ -27,8 +27,8 @@ if (mesh.is_watertight) :
 
     #generating the domain with required parameters
 
-    nx,ny,nz = 641,640,20
-    lx,ly,lz = 275,76.25,76.25
+    nx,ny,nz = 321,320,20
+    lx,ly,lz = 55,15.25,15.25
     cex,cey,cez = lx/2,ly/2, lz/2
     #r=0.5
     print("generating domain mesh..")
@@ -71,7 +71,7 @@ if (mesh.is_watertight) :
     ax.set_zlim([0,lx])    
     plt.show() #uncomment to visualize the epsilon function
     
-    print("epsilon function generated. Saving into epsilon.txt")
+    print("epsilon function generated. Saving into epsilon.dat")
 
     epsilon=np.reshape(epsilon,(len(X),len(Y),len(Z)))
     index = np.where(epsilon == True)
