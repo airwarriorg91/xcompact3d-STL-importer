@@ -36,6 +36,9 @@ if (mesh.is_watertight) :
     Y = np.arange(0,ly,(ly)/ny)
     Z = np.arange(0,lz,lz/nz)
     Px,Py,Pz = np.meshgrid(X,Y,Z)
+    print(Px.shape)
+    print(Py.shape)
+    print(Pz.shape)
     P = np.stack((Px.ravel(),Py.ravel(),Pz.ravel()), axis=1)
 
     print("Domain mesh generation completed !")
@@ -69,12 +72,15 @@ if (mesh.is_watertight) :
     ax.set_ylabel('Y')
     ax.set_zlabel('Z')
     ax.set_zlim([0,lz])    
-    plt.show() #uncomment to visualize the epsilon function
+    #plt.show() #uncomment to visualize the epsilon function
     
     print("epsilon function generated. Saving into epsilon.dat")
 
-    epsilon=np.reshape(epsilon,(len(X),len(Y),len(Z)))
+    epsilon=np.reshape(epsilon,Px.shape)
+    print(epsilon.shape)
+    #print(epsilon)
     index = np.where(epsilon == True)
+    #print(index)
     with open("epsilon_"+file_name+"_"+str(nx)+".dat", 'w') as f:
         f.write(str(len(index[0]))+'\n')
         for x in range(len(index[0])):
