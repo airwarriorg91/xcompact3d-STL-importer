@@ -1,5 +1,6 @@
 import numpy as np
 import trimesh
+import os
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 
@@ -41,14 +42,31 @@ def epsiPlot(epsilon,P,lx,ly,lz):
     ax.set_zlim([0,lz])    
     plt.show()
 
-def epsiwrite(epsilon,shape,file_name):
+def epsiwrite(epsilon,shape,file_name,tag,nz,ny):
+    if (not os.path.exists(os.getcwd()+"\geometry")):
+        os.makedirs(os.getcwd()+"\geometry")
     epsilon=np.reshape(epsilon,shape)
     index = np.where(epsilon == True)
-    with open("epsilon_"+file_name+".dat", 'w') as f:
-        f.write(str(len(index[0]))+'\n')
-        for x in range(len(index[0])):
-            f.write(str(index[0][x])+' '+str(index[1][x])+' '+str(index[2][x])+'\n')
-    print("epsilon_"+file_name+".dat"+" generated successfully.")
+    if(tag=='z'):
+        index1 = (index[0][np.where(index[2]<=(nz/2))],index[1][np.where(index[2]<=(nz/2))],index[2][np.where(index[2]<=(nz/2))])
+        index2 = (index[0][np.where(index[2]>(nz/2))],index[1][np.where(index[2]>(nz/2))],index[2][np.where(index[2]>(nz/2))])
+    elif(tag=='y'):
+        index1 = (index[0][np.where(index[1]<=(ny/2))],index[1][np.where(index[1]<=(ny/2))],index[2][np.where(index[1]<=(ny/2))])
+        index2 = (index[0][np.where(index[1]>(ny/2))],index[1][np.where(index[1]>(ny/2))],index[2][np.where(index[1]>(ny/2))])
+    else:
+        raise ValueError("Wrong tag entered")
+
+    with open("geometry/epsilon_"+file_name+"1.dat", 'w') as f:
+        f.write(str(len(index1[0]))+'\n')
+        for x in range(len(index1[0])):
+            f.write(str(index1[0][x])+' '+str(index1[1][x])+' '+str(index1[2][x])+'\n')
+    print("epsilon_"+file_name+"1.dat"+" generated successfully.")
+
+    with open("geometry/epsilon_"+file_name+"2.dat", 'w') as f:
+        f.write(str(len(index2[0]))+'\n')
+        for x in range(len(index2[0])):
+            f.write(str(index2[0][x])+' '+str(index2[1][x])+' '+str(index2[2][x])+'\n')
+    print("epsilon_"+file_name+"2.dat"+" generated successfully.")
 
 def epsi_gen(file_name,nx,ny,nz,lx,ly,lz,cex,cey,cez,nraf,iibm,isShow,isPlot):
     mesh = epsi_load(file_name)
@@ -58,25 +76,25 @@ def epsi_gen(file_name,nx,ny,nz,lx,ly,lz,cex,cey,cez,nraf,iibm,isShow,isPlot):
     geo = geogen(mesh,P,cex,cey,cez)
     if(isPlot):
         epsiPlot(geo,P,lx,ly,lz)
-    epsiwrite(geo,shape,file_name)
+    epsiwrite(geo,shape,file_name,'z',nz,ny)
     if(mesh.is_watertight):
         if(iibm==1):
             pass
         elif(iibm==2):
             #generating xepsi with a refinement in x direction
-            P, shape = meshgen(lx,ly,lz,nx*nraf,ny,nz)
+            P, shape = meshgen(lx,ly,lz,(nx-1)*nraf+1,ny,nz)
             geo = geogen(mesh,P,cex,cey,cez)
-            epsiwrite(geo,shape,file_name+"X")
+            epsiwrite(geo,shape,file_name+"X",'z',nz,ny)
 
             #generating yepsi with a refinement in y direction
             P, shape = meshgen(lx,ly,lz,nx,ny*nraf,nz)
             geo = geogen(mesh,P,cex,cey,cez)
-            epsiwrite(geo,shape,file_name+"Y")
+            epsiwrite(geo,shape,file_name+"Y",'z',nz,ny)
 
             #generating yepsi with a refinement in z direction
             P, shape = meshgen(lx,ly,lz,nx,ny,nz*nraf)
             geo = geogen(mesh,P,cex,cey,cez)
-            epsiwrite(geo,shape,file_name+"Z")
+            epsiwrite(geo,shape,file_name+"Z",'y',nz,ny)
         else:
             raise ValueError("Incorrect type of IBM Method entered.")
     else:
