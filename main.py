@@ -8,7 +8,9 @@ lx,ly,lz = 55,15.25,15.25
 cex,cey,cez = lx/2,ly/2, lz/2
 iibm = 2
 nraf = 10
+BC = [2,2,0,0,0,0]
+nobjmax = 2
 isShow = 0
 isPlot = 0
 
-epsi_gen(file_name,nx,ny,nz,lx,ly,lz,cex,cey,cez,nraf,iibm,isShow,isPlot)
+epsi_gen(file_name,nx,ny,nz,lx,ly,lz,cex,cey,cez,nraf,iibm,BC,nobjmax,isShow,isPlot)
