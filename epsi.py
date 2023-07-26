@@ -3,7 +3,7 @@ import trimesh
 import os
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
-from epsiIBM import obj_count, get_boundaries
+from epsiIBM import obj_count, get_boundaries, fixBugs
 
 def meshRef(lx,ly,lz,nx,ny,nz,BC, nraf):
     nrafL = [0,0,0]
@@ -81,15 +81,18 @@ def epsi_gen(file_name,nx,ny,nz,lx,ly,lz,cex,cey,cez,nraf,iibm,BC,nobjmax,isShow
     mesh = epsi_load(file_name)
     if(isShow):
         mesh.show()
-    P, shape = meshgen(lx,ly,lz,nx,ny,nz)
-    geo = geogen(mesh,P,cex,cey,cez)
+    P, epshape = meshgen(lx,ly,lz,nx,ny,nz)
+    ep = geogen(mesh,P,cex,cey,cez)
+    ep = np.reshape(ep,epshape)
+    ep = np.transpose(ep, (1,0,2))
+    epshape = (epshape[1], epshape[0], epshape[2])
     dd, nrafL = meshRef(lx,ly,lz,nx,ny,nz,BC,nraf)
-    nobjx = obj_count(geo,'x',shape)
-    nobjy = obj_count(geo,'y',shape)
-    nobjz = obj_count(geo,'z',shape)
+    nobjx = obj_count(ep,'x',epshape)
+    nobjy = obj_count(ep,'y',epshape)
+    nobjz = obj_count(ep,'z',epshape)
     if(isPlot):
-        epsiPlot(geo,P,lx,ly,lz)
-    epsiwrite(geo,shape,file_name,nz,ny)
+        epsiPlot(ep,P,lx,ly,lz)
+    epsiwrite(ep,epshape,file_name,nz,ny)
 
     if(mesh.is_watertight):
         if(iibm==1):
@@ -98,25 +101,42 @@ def epsi_gen(file_name,nx,ny,nz,lx,ly,lz,cex,cey,cez,nraf,iibm,BC,nobjmax,isShow
             #generating xepsi with a refinement in x direction
             P, shape = meshgen(lx,ly,lz,nrafL[0],ny,nz)
             geo = geogen(mesh,P,cex,cey,cez)
+            geo = np.reshape(geo,shape)
+            geo = np.transpose(geo, (1,0,2))
+            shape = (shape[1], shape[0], shape[2])
             nobjxraf = obj_count(geo,'x',shape)
             print("nobjxraf generated successfully")
-            xi, xf = get_boundaries(geo,'x',shape, lx, ly, lz,nobjmax, dd) 
+            xi, xf = get_boundaries(geo,'x',shape, lx, ly, lz, nobjmax, dd)
+            if(nobjx.all()!=nobjxraf.all()):
+                xi, xf = fixBugs(ep, geo,'x',epshape, nobjx,nobjxraf, nraf, nobjmax, xi, xf) 
             print("xi, xf generated successfully")
 
             #generating yepsi with a refinement in y direction
             P, shape = meshgen(lx,ly,lz,nx,nrafL[1],nz)
             geo = geogen(mesh,P,cex,cey,cez)
+            geo = geogen(mesh,P,cex,cey,cez)
+            geo = np.reshape(geo,shape)
+            geo = np.transpose(geo, (1,0,2))
+            shape = (shape[1], shape[0], shape[2])
             nobjyraf = obj_count(geo,'y',shape)
             print("nobjyraf generated successfully")
             yi, yf = get_boundaries(geo,'y',shape, lx, ly, lz,nobjmax, dd)
+            if(nobjy.all()!=nobjyraf.all()):
+                yi, yf = fixBugs(ep, geo,'y',epshape, nobjy,nobjyraf, nraf, nobjmax, yi, yf)
             print("yi, yf generated successfully")
 
             #generating yepsi with a refinement in z direction
             P, shape = meshgen(lx,ly,lz,nx,ny,nrafL[2])
             geo = geogen(mesh,P,cex,cey,cez)
+            geo = geogen(mesh,P,cex,cey,cez)
+            geo = np.reshape(geo,shape)
+            geo = np.transpose(geo, (1,0,2))
+            shape = (shape[1], shape[0], shape[2])
             nobjzraf = obj_count(geo,'z',shape)
             print("nobjzraf generated successfully")
             zi, zf = get_boundaries(geo,'z',shape, lx, ly, lz,nobjmax, dd)
+            if(nobjz.all()!=nobjzraf.all()):
+                zi, zf = fixBugs(ep, geo,'z',epshape, nobjz,nobjzraf, nraf, nobjmax, zi, zf)
             print("zi, zf generated successfully")
             
         else:
