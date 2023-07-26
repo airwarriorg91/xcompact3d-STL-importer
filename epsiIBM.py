@@ -88,3 +88,153 @@ def get_boundaries(array, dim, shape, lx, ly, lz, nobjmax, dd):
                     zf[knum, i, j] = ly + dd[4]
 
         return zi, zf
+
+def fixBugs(ep,rafep,dim,shape,nobj,nobjraf, nraf, nobjmax, dimi, dimf):
+    ibugs = np.where(nobj!=nobjraf)
+
+    if(dim=='x'):
+        for l in ibugs:
+            iobj = 0
+
+            if (ep[1,l[0],l[1]]):
+                iobj += 1 
+
+            for i in range(shape[0]-1):
+
+                if(not ep[i,l[0],l[1]] and ep[i+1,l[0],l[1]]):
+                    iobj += 1
+
+                elif(not ep[i,l[0],l[1]] and not ep[i+1,l[0],l[1]]):
+                    iflu = 1
+
+                elif(ep[i,l[0],l[1]] and ep[i+1,l[0],l[1]]):
+                    isol = 1
+
+                for iraf in range(1,nraf-1):
+
+                    if not rafep[iraf+nraf*(i-1), l[0], l[1]] and rafep[iraf+nraf*(i-1)+1, l[0], l[1]]:
+                        idebraf = iraf + nraf*(i-1) +1
+
+                    if rafep[iraf+nraf*(i-1), l[0], l[1]] and not rafep[iraf+nraf*(i-1)+1, l[0], l[1]]:
+                        ifinraf = iraf + nraf*(i-1) + 1
+
+                if idebraf != 0 and ifinraf != 0 and idebraf < ifinraf and iflu == 1:
+                    iobj += 1
+
+                    for ii in range(iobj, nobjmax-1):
+
+                        dimi[ii,l[0], l[1]] = dimi[ii+1,l[0], l[1]]
+                        dimf[ii,l[0], l[1]] = dimf[ii+1,l[0], l[1]] 
+
+                if idebraf != 0 and ifinraf != 0 and idebraf > ifinraf and isol == 1:
+                    iobj += 1
+                    for ii in range(iobj, nobjmax-1):
+                        dimi[ii,l[0],l[1]] = dimi[ii+1,l[0],l[1]]
+                    
+                    iobj -= 1
+                    for ii in range(iobj, nobjmax-1):
+                        dimf[ii,l[0],l[1]] = dimf[ii+1,l[0],l[1]]
+
+                idebraf = 0
+                ifinraf = 0
+                iflu = 0
+                isol = 0
+
+    elif(dim=='y'):
+        for l in ibugs:
+            iobj = 0
+
+            if (ep[l[0],1,l[1]]):
+                iobj += 1 
+
+            for j in range(shape[1]-1):
+
+                if(not ep[l[0],j,l[1]] and ep[l[0],j+1,l[1]]):
+                    iobj += 1
+
+                elif(not ep[l[0],j,l[1]] and not ep[l[0],j+1,l[1]]):
+                    iflu = 1
+
+                elif(ep[l[0],j,l[1]] and ep[l[0],j+1,l[1]]):
+                    isol = 1
+
+                for iraf in range(1,nraf-1):
+
+                    if not rafep[l[0], iraf+nraf*(j-1), l[1]] and rafep[l[0], iraf+nraf*(j-1)+1, l[1]]:
+                        idebraf = iraf + nraf*(j-1) +1
+
+                    if rafep[l[0], iraf+nraf*(j-1), l[1]] and not rafep[l[0], iraf+nraf*(j-1)+1, l[1]]:
+                        ifinraf = iraf + nraf*(j-1) + 1
+
+                if idebraf != 0 and ifinraf != 0 and idebraf < ifinraf and iflu == 1:
+                    iobj += 1
+
+                    for ii in range(iobj, nobjmax-1):
+
+                        dimi[ii,l[0], l[1]] = dimi[ii+1,l[0], l[1]]
+                        dimf[ii,l[0], l[1]] = dimf[ii+1,l[0], l[1]] 
+
+                if idebraf != 0 and ifinraf != 0 and idebraf > ifinraf and isol == 1:
+                    iobj += 1
+                    for ii in range(iobj, nobjmax-1):
+                        dimi[ii,l[0],l[1]] = dimi[ii+1,l[0],l[1]]
+                    
+                    iobj -= 1
+                    for ii in range(iobj, nobjmax-1):
+                        dimf[ii,l[0],l[1]] = dimf[ii+1,l[0],l[1]]
+
+                idebraf = 0
+                ifinraf = 0
+                iflu = 0
+                isol = 0
+
+    else:
+        for l in ibugs:
+            iobj = 0
+
+            if (ep[l[0],l[1],1]):
+                iobj += 1 
+
+            for k in range(shape[2]-1):
+
+                if(not ep[l[0],l[1],k] and ep[l[0],l[1],k+1]):
+                    iobj += 1
+
+                elif(not ep[l[0],l[1],k] and not ep[l[0],l[1],k+1]):
+                    iflu = 1
+
+                elif(ep[l[0],l[1],k] and ep[l[0],l[1],k+1]):
+                    isol = 1
+
+                for iraf in range(1,nraf-1):
+
+                    if not rafep[l[0], l[1], iraf+nraf*(k-1)] and rafep[l[0],l[1], iraf+nraf*(k-1)+1]:
+                        idebraf = iraf + nraf*(k-1) +1
+
+                    if rafep[l[0], l[1], iraf+nraf*(k-1)] and not rafep[l[0],l[1], iraf+nraf*(k-1)+1]:
+                        ifinraf = iraf + nraf*(k-1) + 1
+
+                if idebraf != 0 and ifinraf != 0 and idebraf < ifinraf and iflu == 1:
+                    iobj += 1
+
+                    for ii in range(iobj, nobjmax-1):
+
+                        dimi[ii,l[0], l[1]] = dimi[ii+1,l[0], l[1]]
+                        dimf[ii,l[0], l[1]] = dimf[ii+1,l[0], l[1]] 
+
+                if idebraf != 0 and ifinraf != 0 and idebraf > ifinraf and isol == 1:
+                    iobj += 1
+                    for ii in range(iobj, nobjmax-1):
+                        dimi[ii,l[0],l[1]] = dimi[ii+1,l[0],l[1]]
+                    
+                    iobj -= 1
+                    for ii in range(iobj, nobjmax-1):
+                        dimf[ii,l[0],l[1]] = dimf[ii+1,l[0],l[1]]
+
+                idebraf = 0
+                ifinraf = 0
+                iflu = 0
+                isol = 0
+
+    return dimi, dimf
+                
