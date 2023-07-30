@@ -64,17 +64,30 @@ def epsiPlot(epsilon,P,lx,ly,lz):
     ax.set_zlim([0,lz])    
     plt.show()
 
-def epsiwrite(epsilon,shape,file_name,nz,ny):
+def epsiwrite(array1,array2=None,dim=None, ftype=None):
     if (not os.path.exists(os.getcwd()+"\geometry")):
         os.makedirs(os.getcwd()+"\geometry")
-    epsilon=np.reshape(epsilon,shape)
-    index = np.where(epsilon == True)
-
-    with open("geometry/epsilon_"+file_name+".dat", 'w') as f:
-        f.write(str(len(index[0]))+'\n')
-        for x in range(len(index[0])):
-            f.write(str(index[0][x])+' '+str(index[1][x])+' '+str(index[2][x])+'\n')
-    print("epsilon_"+file_name+".dat"+" generated successfully.")
+    array1t = array1.flatten('F')
+    if ftype == 'epsilon':
+        array1t = np.int_(array1t)
+        np.savetxt("geometry/epsilon.bin",array1t,fmt='%12d')
+        print("epsilon.bin generated successfully.")
+    elif ftype == 'obj':
+        np.savetxt("geometry/nobj"+dim+".dat",array1t,fmt='%12d')
+        print("nobj"+dim+".dat generated successfully.")
+    elif ftype == 'xixf':
+        array2t = array2.flatten("F")
+        temp = list(zip(array1t, array2t))
+        np.savetxt("geometry/"+dim+"i"+dim+"f"+".dat",temp,fmt=['%24.16E','%24.16E'])
+        print(dim+"i"+dim+"f"+".dat generated successfully.")
+    elif ftype == 'nxifpif':
+        array2t = array2.flatten("F")
+        temp = list(zip(array1t, array2t))
+        np.savetxt("geometry/n"+dim+"if"+"pif.dat",temp,fmt=['%12d','%12d'])
+        print("n"+dim+"if"+"pif.dat generated successfully.") 
+    else:
+        pass
+    
 
 
 def epsi_gen(file_name,nx,ny,nz,lx,ly,lz,cex,cey,cez,nraf,iibm,BC,nobjmax,npif,izap,isShow,isPlot):
@@ -92,7 +105,7 @@ def epsi_gen(file_name,nx,ny,nz,lx,ly,lz,cex,cey,cez,nraf,iibm,BC,nobjmax,npif,i
         
         if(isPlot):
             epsiPlot(ep,P,lx,ly,lz)
-        epsiwrite(ep,epshape,file_name,nz,ny)
+        epsiwrite(ep,ftype="epsilon")
 
         if(iibm==1):
             pass
@@ -100,8 +113,11 @@ def epsi_gen(file_name,nx,ny,nz,lx,ly,lz,cex,cey,cez,nraf,iibm,BC,nobjmax,npif,i
 
             #counting the number of objects in the x, y and z directions
             nobjx = obj_count(ep,'x',epshape)
+            epsiwrite(nobjx,dim='x',ftype='obj')
             nobjy = obj_count(ep,'y',epshape)
+            epsiwrite(nobjy,dim='y',ftype='obj')
             nobjz = obj_count(ep,'z',epshape)
+            epsiwrite(nobjz,dim='z',ftype='obj')
 
             #generating xepsi with a refinement in x direction and counting 
             #the number of objects in x direction after refinement 
@@ -111,7 +127,7 @@ def epsi_gen(file_name,nx,ny,nz,lx,ly,lz,cex,cey,cez,nraf,iibm,BC,nobjmax,npif,i
             geo = np.transpose(geo, (1,0,2))
             shape = (shape[1], shape[0], shape[2])
             nobjxraf = obj_count(geo,'x',shape)
-            print("nobjxraf generated successfully")
+            
 
             #getting the boundaries in the x direction
             xi, xf = get_boundaries(geo,'x',shape, lx, ly, lz, nobjmax, dd)
@@ -119,7 +135,7 @@ def epsi_gen(file_name,nx,ny,nz,lx,ly,lz,cex,cey,cez,nraf,iibm,BC,nobjmax,npif,i
             #if the number of objects in x direction doesn't match before and after refinement
             if(nobjx.all()!=nobjxraf.all()):
                 xi, xf = fixBugs(ep, geo,'x',epshape, nobjx,nobjxraf, nraf, nobjmax, xi, xf) 
-            print("xi, xf generated successfully")
+            epsiwrite(xi,xf,'x','xixf')
 
             #generating yepsi with a refinement in y direction and counting
             #the number of objects in y direction after refinement
@@ -130,7 +146,6 @@ def epsi_gen(file_name,nx,ny,nz,lx,ly,lz,cex,cey,cez,nraf,iibm,BC,nobjmax,npif,i
             geo = np.transpose(geo, (1,0,2))
             shape = (shape[1], shape[0], shape[2])
             nobjyraf = obj_count(geo,'y',shape)
-            print("nobjyraf generated successfully")
 
             #getting boundaries in the y direction
             yi, yf = get_boundaries(geo,'y',shape, lx, ly, lz,nobjmax, dd)
@@ -138,7 +153,7 @@ def epsi_gen(file_name,nx,ny,nz,lx,ly,lz,cex,cey,cez,nraf,iibm,BC,nobjmax,npif,i
             #if the number of objects in y direction doesn't match before and after refinement
             if(nobjy.all()!=nobjyraf.all()):
                 yi, yf = fixBugs(ep, geo,'y',epshape, nobjy,nobjyraf, nraf, nobjmax, yi, yf)
-            print("yi, yf generated successfully")
+            epsiwrite(yi,yf,'y','xixf')
 
             #generating zepsi with a refinement in z direction and counting
             #the number of objects in z direction after refinement
@@ -149,7 +164,6 @@ def epsi_gen(file_name,nx,ny,nz,lx,ly,lz,cex,cey,cez,nraf,iibm,BC,nobjmax,npif,i
             geo = np.transpose(geo, (1,0,2))
             shape = (shape[1], shape[0], shape[2])
             nobjzraf = obj_count(geo,'z',shape)
-            print("nobjzraf generated successfully")
 
             #getting boundaries in the z direction
             zi, zf = get_boundaries(geo,'z',shape, lx, ly, lz,nobjmax, dd)
@@ -158,15 +172,16 @@ def epsi_gen(file_name,nx,ny,nz,lx,ly,lz,cex,cey,cez,nraf,iibm,BC,nobjmax,npif,i
             if(nobjz.all()!=nobjzraf.all()):
                 zi, zf = fixBugs(ep, geo,'z',epshape, nobjz,nobjzraf, nraf, nobjmax, zi, zf)
             print("zi, zf generated successfully")
+            epsiwrite(zi,zf,'z','xixf')
 
             #generating nxifpif, nyifpif, nzifpif 
 
             nxipif, nxfpif = verify(ep, 'x', epshape, nobjmax, npif, izap)
-            print("nxipif, nxfpif generated successfully")
+            epsiwrite(nxipif,nxfpif,'x','nxifpif')
             nyipif, nyfpif = verify(ep, 'y', epshape, nobjmax, npif, izap)
-            print("nyipif, nyfpif generated successfully")
+            epsiwrite(nyipif,nyfpif,'y','nxifpif')
             nzipif, nzfpif = verify(ep, 'z', epshape, nobjmax, npif, izap)
-            print("nzipif, nzfpif generated successfully")
+            epsiwrite(nzipif,nzfpif,'z','nxifpif')
 
         else:
             raise ValueError("Incorrect type of IBM Method entered.")
