@@ -57,7 +57,7 @@ def epsiPlot(epsilon,P,lx,ly,lz):
     ax.scatter(epsilonPoints[:,0], epsilonPoints[:,1], epsilonPoints[:,2], lw = 0., c = 'k')
     plt.title("Epsilon Function of the geometry")
     plt.xlim([0,lx])
-    plt.ylim([0,ly])
+    plt.ylim([0,lx])
     ax.set_xlabel('X')
     ax.set_ylabel('Y')
     ax.set_zlabel('Z')
@@ -97,20 +97,19 @@ def epsi_gen(file_name,nx,ny,nz,lx,ly,lz,cex,cey,cez,nraf,iibm,BC,nobjmax,npif,i
 
     if(mesh.is_watertight):
         P, epshape = meshgen(lx,ly,lz,nx,ny,nz)
-        ep = geogen(mesh,P,cex,cey,cez)
-        ep = np.reshape(ep,epshape)
+        ep0 = geogen(mesh,P,cex,cey,cez)
+        ep = np.reshape(ep0,epshape)
         ep = np.transpose(ep, (1,0,2))
         epshape = (epshape[1], epshape[0], epshape[2])
         dd, nrafL = meshRef(lx,ly,lz,nx,ny,nz,BC,nraf)
         
         if(isPlot):
-            epsiPlot(ep,P,lx,ly,lz)
+            epsiPlot(ep0,P,lx,ly,lz)
         epsiwrite(ep,ftype="epsilon")
 
         if(iibm==1):
             pass
         elif(iibm==2):
-
             #counting the number of objects in the x, y and z directions
             nobjx = obj_count(ep,'x',epshape)
             epsiwrite(nobjx,dim='x',ftype='obj')
