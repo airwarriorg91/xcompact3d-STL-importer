@@ -3,8 +3,8 @@ from epsi import epsi_gen
 
 #parameters
 file_name = "cylinder"
-nx,ny,nz = 321,320,20
-lx,ly,lz = 55,15.25,15.25
+nx,ny,nz = 301,300,8
+lx,ly,lz = 16,16,8
 cex,cey,cez = lx/2,ly/2, lz/2
 iibm = 2
 nraf = 10
